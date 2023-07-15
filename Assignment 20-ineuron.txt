@@ -1,0 +1,273 @@
+1.Given a binary tree, your task is to find subtree with maximum sum in tree.
+
+Examples:
+
+Input1 :       
+
+       1
+
+     /   \
+
+   2      3
+
+  / \    / \
+
+4   5  6   7
+
+Output1 : 28
+
+As all the tree elements are positive, the largest subtree sum is equal to sum of all tree elements.
+
+Input2 :
+
+       1
+
+     /    \
+
+  -2      3
+
+  / \    /  \
+
+4   5  -6   2
+
+Output2 : 7
+
+Subtree with largest sum is :
+
+ -2
+
+ / \
+
+4   5
+
+Also, entire tree sum is also 7.
+
+
+ans-:
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode(int val) {
+        this.val = val;
+    }
+}
+
+class SubtreeMaxSum {
+    int maxSum = Integer.MIN_VALUE;
+    
+    public int maxSubtreeSum(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        int currentSum = root.val + maxSubtreeSum(root.left) + maxSubtreeSum(root.right);
+        maxSum = Math.max(maxSum, currentSum);
+        
+        return currentSum;
+    }
+    
+    public static void main(String[] args) {
+        SubtreeMaxSum solution = new SubtreeMaxSum();
+        
+        // Example 1
+        TreeNode root1 = new TreeNode(1);
+        root1.left = new TreeNode(2);
+        root1.right = new TreeNode(3);
+        root1.left.left = new TreeNode(4);
+        root1.left.right = new TreeNode(5);
+        root1.right.left = new TreeNode(6);
+        root1.right.right = new TreeNode(7);
+        int maxSum1 = solution.maxSubtreeSum(root1);
+        System.out.println("Maximum subtree sum: " + maxSum1);
+        
+        // Example 2
+        TreeNode root2 = new TreeNode(1);
+        root2.left = new TreeNode(-2);
+        root2.right = new TreeNode(3);
+        root2.left.left = new TreeNode(4);
+        root2.left.right = new TreeNode(5);
+        root2.right.left = new TreeNode(-6);
+        root2.right.right = new TreeNode(2);
+        int maxSum2 = solution.maxSubtreeSum(root2);
+        System.out.println("Maximum subtree sum: " + maxSum2);
+    }
+}
+
+💡 2
+
+Construct the BST (Binary Search Tree) from its given level order traversal.
+
+Example:
+
+Input: arr[] = {7, 4, 12, 3, 6, 8, 1, 5, 10}
+
+Output: BST:
+
+            7
+
+         /    \
+
+       4     12
+
+     /  \     /
+
+    3   6  8
+
+   /    /     \
+
+ 1    5      10
+
+ans-:
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode(int val) {
+        this.val = val;
+    }
+}
+
+class LevelOrderToBST {
+    public TreeNode constructBST(int[] levelOrder) {
+        if (levelOrder == null || levelOrder.length == 0) {
+            return null;
+        }
+        
+        return constructBST(levelOrder, 0, levelOrder.length - 1);
+    }
+    
+    private TreeNode constructBST(int[] levelOrder, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        
+        TreeNode root = new TreeNode(levelOrder[start]);
+        
+        int i;
+        for (i = start + 1; i <= end; i++) {
+            if (levelOrder[i] > root.val) {
+                break;
+            }
+        }
+        
+        root.left = constructBST(levelOrder, start + 1, i - 1);
+        root.right = constructBST(levelOrder, i, end);
+        
+        return root;
+    }
+    
+    public void printBST(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        
+        System.out.print(root.val + " ");
+        printBST(root.left);
+        printBST(root.right);
+    }
+    
+    public static void main(String[] args) {
+        LevelOrderToBST solution = new LevelOrderToBST();
+        
+        int[] levelOrder = {7, 4, 12, 3, 6, 8, 1, 5, 10};
+        TreeNode root = solution.constructBST(levelOrder);
+        System.out.println("BST:");
+        solution.printBST(root);
+    }
+}
+
+<aside>
+💡 3
+
+Given an array of size n. The problem is to check whether the given array can represent the level order traversal of a Binary Search Tree or not.
+
+Examples:
+
+Input1 : arr[] = {7, 4, 12, 3, 6, 8, 1, 5, 10}
+
+Output1 : Yes
+
+For the given arr[], the Binary Search Tree is:
+
+            7
+
+         /    \
+
+       4     12
+
+     /  \     /
+
+    3   6  8
+
+   /    /     \
+
+ 1    5      10
+
+Input2 : arr[] = {11, 6, 13, 5, 12, 10}
+
+Output2 : No
+
+The given arr[] does not represent the level order traversal of a BST.
+
+ans-:
+import java.util.Stack;
+
+class LevelOrderBSTCheck {
+    public static boolean checkLevelOrderBST(int[] arr) {
+        if (arr.length <= 2) {
+            return true;
+        }
+        
+        int n = arr.length;
+        Stack<Integer> stack = new Stack<>();
+        int min = Integer.MIN_VALUE;
+        int max = Integer.MAX_VALUE;
+        
+        stack.push(arr[0]);
+        
+        for (int i = 1; i < n; i++) {
+            int current = arr[i];
+            
+            if (current < min || current > max) {
+                return false;
+            }
+            
+            if (!stack.isEmpty() && current > stack.peek()) {
+                min = stack.pop();
+                while (!stack.isEmpty() && current > stack.peek()) {
+                    min = stack.pop();
+                }
+            }
+            
+            stack.push(current);
+        }
+        
+        return true;
+    }
+    
+    public static void main(String[] args) {
+        int[] arr1 = {7, 4, 12, 3, 6, 8, 1, 5, 10};
+        System.out.println(checkLevelOrderBST(arr1)); // Output: true
+        
+        int[] arr2 = {11, 6, 13, 5, 12, 10};
+        System.out.println(checkLevelOrderBST(arr2)); // Output: false
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
